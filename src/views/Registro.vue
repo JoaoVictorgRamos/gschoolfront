@@ -1,9 +1,17 @@
 <template>
   <div class="container" data-anima="top">
-    <DefaultTemplate />
     <div class="container-login">
-      <h1>Login</h1>
+      <h1>Inscreva-se</h1>
       <div class="container-inputs">
+        <div style="display: grid">
+          <label for="nome">Nome completo</label>
+          <input
+            id="nome"
+            type="text"
+            placeholder="Digite seu nome completo"
+            v-model="email"
+          />
+        </div>
         <div style="display: grid">
           <label for="email">Endereço de e-mail</label>
           <input
@@ -24,10 +32,11 @@
         </div>
       </div>
       <div class="container-button">
-        <p @click="redirect">Não tenho conta</p>
-        <button>Acessar</button>
+        <p @click="redirect">Já tenho conta</p>
+        <button>Cadastrar</button>
       </div>
     </div>
+    <DefaultTemplate />
   </div>
 </template>
 
@@ -46,7 +55,7 @@ export default {
   },
   methods: {
     redirect() {
-      this.$router.push({ name: "Registro" });
+      this.$router.push({ name: "home" });
     },
   },
 };
