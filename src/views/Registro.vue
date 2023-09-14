@@ -1,5 +1,5 @@
 <template>
-  <div class="container" data-anima="top">
+  <form class="container" data-anima="top" @submit.stop.prevent="onSubmit">
     <div class="container-login">
       <h1>Inscreva-se</h1>
       <div class="container-inputs">
@@ -9,7 +9,7 @@
             id="nome"
             type="text"
             placeholder="Digite seu nome completo"
-            v-model="email"
+            v-model="name"
           />
         </div>
         <div style="display: grid">
@@ -33,14 +33,15 @@
       </div>
       <div class="container-button">
         <p @click="redirect">Já tenho conta</p>
-        <button>Cadastrar</button>
+        <button type="submit">Cadastrar</button>
       </div>
     </div>
     <DefaultTemplate />
-  </div>
+  </form>
 </template>
 
 <script>
+import axios from "axios";
 import DefaultTemplate from "@/components/DefaultTemplate.vue";
 
 export default {
@@ -49,13 +50,49 @@ export default {
   },
   data() {
     return {
+      name: "",
       email: "",
       password: "",
     };
   },
   methods: {
     redirect() {
-      this.$router.push({ name: "home" });
+      this.$router.push({ name: "login" });
+    },
+    autoLogin() {
+      var link = "http://127.0.0.1:8000/api/login";
+      var data = {
+        email: this.email,
+        password: this.password,
+      };
+      axios
+        .post(link, data)
+        .then((response) => {
+          this.$router.push({ name: "home" });
+          var cookie = `access_token=${response.data.token_type} ${response.data.acess_token}`;
+          document.cookie = cookie;
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {});
+    },
+    onSubmit() {
+      var link = "http://127.0.0.1:8000/api/register";
+      var data = {
+        name: this.name,
+        email: this.email,
+        password: this.password,
+      };
+      axios
+        .post(link, data)
+        .then((response) => {
+          this.autoLogin();
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {});
     },
   },
 };

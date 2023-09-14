@@ -1,5 +1,5 @@
 <template>
-  <div class="container" data-anima="top">
+  <form class="container" data-anima="top" @submit.stop.prevent="onSubmit">
     <DefaultTemplate />
     <div class="container-login">
       <h1>Login</h1>
@@ -25,13 +25,15 @@
       </div>
       <div class="container-button">
         <p @click="redirect">Não tenho conta</p>
-        <button>Acessar</button>
+        <button type="submit">Acessar</button>
       </div>
     </div>
-  </div>
+  </form>
 </template>
 
 <script>
+import axios from "axios";
+
 import DefaultTemplate from "@/components/DefaultTemplate.vue";
 
 export default {
@@ -47,6 +49,25 @@ export default {
   methods: {
     redirect() {
       this.$router.push({ name: "Registro" });
+    },
+    onSubmit() {
+      var link = "http://127.0.0.1:8000/api/login";
+      var data = {
+        email: this.email,
+        password: this.password,
+      };
+      axios
+        .post(link, data)
+        .then((response) => {
+          console.log("response", response);
+          this.$router.push({ name: "home" });
+          var cookie = `access_token=${response.data.token_type} ${response.data.acess_token}`;
+          document.cookie = cookie;
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {});
     },
   },
 };
